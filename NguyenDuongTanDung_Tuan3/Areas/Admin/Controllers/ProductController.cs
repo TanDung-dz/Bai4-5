@@ -1,20 +1,18 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using NguyenDuongTanDung_Tuan3.Repository;
-using NguyenDuongTanDung_Tuan3.Models; 
-
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.AspNetCore.Authorization;
+using NguyenDuongTanDung_Tuan3.Models;
+using NguyenDuongTanDung_Tuan3.Repository;
 
-
-namespace NguyenDuongTanDung_Tuan3.Controllers
+namespace NguyenDuongTanDung_Tuan3.Areas.Admin.Controllers
 {
-    //[Area("Admin")]
+    [Area("Admin")]
     [Authorize(Roles = SD.Role_Admin)]
     public class ProductController : Controller
     {
         private readonly IProductRepository _productRepository;
         private readonly ICategoryRepository _categoryRepository;
-        public ProductController(IProductRepository productRepository,ICategoryRepository categoryRepository)
+        public ProductController(IProductRepository productRepository, ICategoryRepository categoryRepository)
         {
             _productRepository = productRepository;
             _categoryRepository = categoryRepository;
@@ -27,7 +25,7 @@ namespace NguyenDuongTanDung_Tuan3.Controllers
 
         }
 
-        public  async Task<IActionResult> Create()
+        public async Task<IActionResult> Create()
         {
             var categories = await _categoryRepository.GetAllAsync();
             ViewBag.Categories = new SelectList(categories, "Id", "Name");
@@ -72,7 +70,7 @@ namespace NguyenDuongTanDung_Tuan3.Controllers
         // Hiển thị thông tin chi tiết sản phẩm
         public async Task<IActionResult> Display(int id)
         {
-           
+
             var product = await _productRepository.GetByIdAsync(id);
             var category = await _categoryRepository.GetByIdAsync(product.CategoryId);
             ViewBag.Category = category.Name;
@@ -93,7 +91,7 @@ namespace NguyenDuongTanDung_Tuan3.Controllers
                 return NotFound();
             }
             var categories = await _categoryRepository.GetAllAsync();
-            ViewBag.Categories = new SelectList(categories, "Id", "Name",product.CategoryId);
+            ViewBag.Categories = new SelectList(categories, "Id", "Name", product.CategoryId);
 
             return View(product);
         }
@@ -141,5 +139,5 @@ namespace NguyenDuongTanDung_Tuan3.Controllers
             return "/images/" + image.FileName; // Trả về đường dẫn tương đối
         }
     }
-
 }
+
